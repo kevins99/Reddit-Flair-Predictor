@@ -1,0 +1,80 @@
+To remember: Configure Procfile properly else H10 error code will be encountered as server does not launch
+Keep requirements.txt as small as possible, have ojnly required modules (suggested: create new enviroment to deploy)
+
+
+1) Activate environment
+   conda activate yourenvname
+
+2) Add 'project_name' to settings.py
+
+3) run 'python manage.py migrate'
+
+4) heroku login
+
+5) Add Procfile 
+    touch Procfile
+    Add line:
+    web: gunicorn project_name.wsgi --log-file -
+    (Replace project_name with your project_name)
+
+6) Add a runtime.txt file in the project root directory and specify the correct Python version.
+    python-3.6.10
+
+7) pip install gunicorn dj-database-url whitenoise psycopg2
+
+8) pip freeze > requirements.txt NOTE: MAKE SURE THE ENVIRONMENT USED IS NOT TOO LARGE(Heroku cannot deploy more than 500 MB)
+
+9) Open up settings.py file and make the following changes, preferably at the bottom of the file.
+
+    # Static files (CSS, JavaScript, Images)
+    # https://docs.djangoproject.com/en/1.11/howto/static-files/
+    PROJECT_ROOT   =   os.path.join(os.path.abspath(__file__))
+    STATIC_ROOT  =   os.path.join(PROJECT_ROOT, 'staticfiles')
+    STATIC_URL = '/static/'
+
+    # Extra lookup directories for collectstatic to find static files
+    STATICFILES_DIRS = (
+        os.path.join(PROJECT_ROOT, 'static'),
+    )
+
+    #  Add configuration for static files storage using whitenoise
+    STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
+
+    NOTE: whitenoise.django.GzipManifestStaticFilesStorage is deprecated in whitenoise>4.0;
+    instead use 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+10) Add whitenoise middleware at the top of the middleware list in settings.py
+
+    MIDDLEWARE = [
+        'whitenoise.middleware.WhiteNoiseMiddleware',
+        'django.middleware.security.SecurityMiddleware',
+        'django.contrib.sessions.middleware.SessionMiddleware',
+        'django.middleware.common.CommonMiddleware',
+        'django.middleware.csrf.CsrfViewMiddleware',
+        'django.contrib.auth.middleware.AuthenticationMiddleware',
+        'django.contrib.messages.middleware.MessageMiddleware',
+        'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    ]
+
+11)  Update Database Configuration in settings.py (at the bottom of the file)
+
+    import dj_database_url 
+    prod_db  =  dj_database_url.config(conn_max_age=500)
+    DATABASES['default'].update(prod_db)
+
+12) Add your app domain name to ALLOWED_HOSTS in settings.py.
+
+    ALLOWED_HOSTS = ['herokudjangoapp.herokuapp.com']
+
+13) git init 
+
+14) heroku git:remote -a herokudjangoapp
+
+15) git add .
+
+16) git commit -m "Initial commit"
+
+17) git push heroku master
+
+18) heroku run python manage.py migrate
+
