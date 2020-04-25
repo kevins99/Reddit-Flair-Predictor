@@ -39,8 +39,17 @@ The project is divided into 5 parts:
 
 The requirements file is requirements.txt
 
+## Codebase
+The project is developed with Python, webapp created sing the Django framework and finally deployed on Heroku
+
 ## Tech Stack
   1) sklearn
   2) nltk
   3) Django
   4) HTML/CSS
+  5) pandas
+  6) gunicorn
+  7) XGBoost
+  8) LightGBM
+  
+  
