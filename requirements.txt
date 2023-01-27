@@ -76,7 +76,7 @@ nltk==3.3
 notebook==6.0.3
 numpy==1.18.3
 oauthlib==3.1.0
-onnx==1.6.0
+onnx==1.13.0
 onnx-tf==1.5.0
 opencv-python==4.2.0.32
 opt-einsum==3.1.0
